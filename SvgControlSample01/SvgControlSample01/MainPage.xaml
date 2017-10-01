@@ -14,6 +14,7 @@
                     <Setter Property="VerticalOptions" Value="Start"/>
                     <Setter Property="HorizontalOptions" Value="Start"/>
                     <Setter Property="EmbeddedResource" Value="SvgControlSample01.Images.pig.svg"/>
+                    <Setter Property="EnableTouchEvents" Value="true"/>
                 </Style>
             </ResourceDictionary>
         </Grid.Resources>
@@ -22,8 +23,8 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <local:SvgControl Grid.Row="0" WidthRequest="32" HeightRequest="32" />
-        <local:SvgControl Grid.Row="1" WidthRequest="64" HeightRequest="64" />
-        <local:SvgControl Grid.Row="2" WidthRequest="128" HeightRequest="128" />
+        <local:SvgControl Grid.Row="0" WidthRequest="32" HeightRequest="32" Touch="SvgControl_Touch" />
+        <local:SvgControl Grid.Row="1" WidthRequest="64" HeightRequest="64"  />
+        <local:SvgControl Grid.Row="2" WidthRequest="128" HeightRequest="128"  />
     </Grid>
 </ContentPage>

@@ -13,5 +13,10 @@ namespace SvgControlSample01
         {
             InitializeComponent();
         }
+
+        async private void SvgControl_Touch(object sender, SkiaSharp.Views.Forms.SKTouchEventArgs e)
+        {
+            await DisplayAlert("Test", "Click from svg control", "OK");
+        }
     }
 }
