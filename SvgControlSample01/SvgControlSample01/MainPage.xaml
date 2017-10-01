@@ -10,9 +10,10 @@
             <ResourceDictionary >
                 <Style TargetType="local:SvgControl">
                     <Setter Property="Margin" Value="12"/>
-                    <Setter Property="BackgroundColor" Value="Bisque"/>
+                    <Setter Property="BackgroundColor" Value="Green"/>
                     <Setter Property="VerticalOptions" Value="Start"/>
                     <Setter Property="HorizontalOptions" Value="Start"/>
+                    <Setter Property="EmbeddedResource" Value="SvgControlSample01.Images.pig.svg"/>
                 </Style>
             </ResourceDictionary>
         </Grid.Resources>

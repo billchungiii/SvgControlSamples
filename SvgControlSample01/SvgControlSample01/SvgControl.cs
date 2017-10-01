@@ -2,8 +2,10 @@
 using SkiaSharp.Views.Forms;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Xamarin.Forms;
@@ -12,6 +14,14 @@ namespace SvgControlSample01
 {
     public class SvgControl : SKCanvasView
     {
+        public static readonly BindableProperty EmbeddedResourceProperty =
+  BindableProperty.Create("EmbeddedResource", typeof(string), typeof(SvgControl), default(string));
+        public string EmbeddedResource
+        {
+            get { return (string)GetValue(EmbeddedResourceProperty); }
+            set { SetValue(EmbeddedResourceProperty, value); }
+        }
+
         public static readonly BindableProperty AspectProperty =
     BindableProperty.Create("Aspect", typeof(Aspect), typeof(SvgControl), Aspect.AspectFit);
         public Aspect Aspect
@@ -19,33 +29,38 @@ namespace SvgControlSample01
             get { return (Aspect)GetValue(AspectProperty); }
             set { SetValue(AspectProperty, value); }
         }
-        protected override void OnPaintSurface(SKPaintSurfaceEventArgs e)
+ protected override void OnPaintSurface(SKPaintSurfaceEventArgs e)
+ {
+     var svg = CreateSKSvg();
+     ScaleCanvas(e, svg);
+     using (SKPaint paint = new SKPaint())
+     {
+         e.Surface.Canvas.Clear();
+         e.Surface.Canvas.DrawPicture(svg.Picture, paint);
+     }
+ }
+
+private SkiaSharp.Extended.Svg.SKSvg CreateSKSvg()
+{
+    var stream = GetEmbeddedResourceStream();
+    var svg = new SkiaSharp.Extended.Svg.SKSvg();
+    svg.Load(stream);
+    return svg;
+}
+
+        private Stream GetEmbeddedResourceStream()
         {
-            var svg = CreateSKSvg();
-            ScaleCanvas(e, svg);
-            using (SKPaint paint = new SKPaint())
+            var assembly = this.GetType().GetTypeInfo().Assembly;
+            var resourceNames = assembly.GetManifestResourceNames();
+            var resourcePaths = resourceNames.FirstOrDefault((x) => x == EmbeddedResource);
+            if (resourcePaths == null)
             {
-                e.Surface.Canvas.Clear();
-                e.Surface.Canvas.DrawPicture(svg.Picture, paint);
+                throw new Exception(string.Format("Embedde resource {0} not found.", EmbeddedResource));
             }
+
+            return assembly.GetManifestResourceStream(resourcePaths);
         }
 
-        private SkiaSharp.Extended.Svg.SKSvg CreateSKSvg()
-        {
-            string svgText = "<?xml version='1.0' encoding='utf-8'?>" +
-                             "<svg xmlns='http://www.w3.org/2000/svg' height='128' width='128' viewBox='0 0 128 128'>" +
-                             "<g>" +
-                             "<path id='path1' transform='rotate(0,64,64) translate(26.4105767058103,0) scale(3.9988749808127,3.9988749808127)  ' Fill='#FFFFFF' " +
-                             "d='M16.599986,4.4019985L3.0000018,17.004999 16.599986,27.808001z M18.8,0L18.599986,32.007996 18.599986,32.009003 0,17.205z' />" +
-                             "</g>" +
-                             "</svg>";
-
-            byte[] bytes = Encoding.UTF8.GetBytes(svgText);
-            MemoryStream stream = new MemoryStream(bytes);
-            var svg = new SkiaSharp.Extended.Svg.SKSvg();
-            svg.Load(stream);
-            return svg;
-        }
 
         private void ScaleCanvas(SKPaintSurfaceEventArgs e, SkiaSharp.Extended.Svg.SKSvg svg)
         {
