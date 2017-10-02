@@ -29,36 +29,36 @@ namespace SvgControlSample01
             get { return (Aspect)GetValue(AspectProperty); }
             set { SetValue(AspectProperty, value); }
         }
- protected override void OnPaintSurface(SKPaintSurfaceEventArgs e)
- {
-     var svg = CreateSKSvg();
-     ScaleCanvas(e, svg);
-     using (SKPaint paint = new SKPaint())
-     {
-         e.Surface.Canvas.Clear();
-         e.Surface.Canvas.DrawPicture(svg.Picture, paint);
-     }
- }
+        protected override void OnPaintSurface(SKPaintSurfaceEventArgs e)
+        {
+            var svg = CreateSKSvg();
+            ScaleCanvas(e, svg);
+            using (SKPaint paint = new SKPaint())
+            {
+                e.Surface.Canvas.Clear();
+                e.Surface.Canvas.DrawPicture(svg.Picture, paint);
+            }
+        }
 
-private SkiaSharp.Extended.Svg.SKSvg CreateSKSvg()
-{
-    var stream = GetEmbeddedResourceStream();
-    var svg = new SkiaSharp.Extended.Svg.SKSvg();
-    svg.Load(stream);
-    return svg;
-}
+        private SkiaSharp.Extended.Svg.SKSvg CreateSKSvg()
+        {
+            var stream = GetEmbeddedResourceStream();
+            var svg = new SkiaSharp.Extended.Svg.SKSvg();
+            svg.Load(stream);
+            return svg;
+        }
 
         private Stream GetEmbeddedResourceStream()
         {
             var assembly = this.GetType().GetTypeInfo().Assembly;
-            var resourceNames = assembly.GetManifestResourceNames();
-            var resourcePaths = resourceNames.FirstOrDefault((x) => x == EmbeddedResource);
-            if (resourcePaths == null)
+            if (assembly.GetManifestResourceNames().Any((x) => x == EmbeddedResource))
+            {
+                return assembly.GetManifestResourceStream(EmbeddedResource);
+            }
+            else
             {
                 throw new Exception(string.Format("Embedde resource {0} not found.", EmbeddedResource));
             }
-
-            return assembly.GetManifestResourceStream(resourcePaths);
         }
 
 
